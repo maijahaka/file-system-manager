@@ -1,6 +1,9 @@
 import java.util.Scanner;
+
+import handler.OutputHandler;
 import handler.UserInputHandler;
 import service.FileService;
+import service.LoggingService;
 import userinterface.UserInterface;
 
 public class Main {
@@ -12,7 +15,9 @@ public class Main {
         String resourcePathString = "resources";
 
         UserInputHandler inputHandler = new UserInputHandler(scanner);
-        FileService fileService = new FileService(resourcePathString, inputHandler);
+        LoggingService logger = new LoggingService();
+        OutputHandler outputHandler = new OutputHandler(logger);
+        FileService fileService = new FileService(resourcePathString, inputHandler, outputHandler);
 
         UserInterface userInterface = new UserInterface(inputHandler, fileService);
 

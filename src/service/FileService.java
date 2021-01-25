@@ -14,27 +14,30 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Set;
 
+import handler.OutputHandler;
 import handler.UserInputHandler;
 
 public class FileService {
     private String resourcePathString;
     private UserInputHandler inputHandler;
+    private OutputHandler outputHandler;
 
-    public FileService(String resourcePathString, UserInputHandler inputHandler) {
+    public FileService(String resourcePathString, UserInputHandler inputHandler, OutputHandler outputHandler) {
         this.resourcePathString = resourcePathString;
         this.inputHandler = inputHandler;
+        this.outputHandler = outputHandler;
     }
 
     public void listAllFiles() {
         String[] filenames = getAllFiles();
 
-        System.out.println();
+        outputHandler.printAndLog("");
 
-        System.out.println("Here are the files:");
-        System.out.println("-------------------");
+        outputHandler.printAndLog("Here are the files:");
+        outputHandler.printAndLog("-------------------");
 
         for (String name : filenames) {
-            System.out.println(name);
+            outputHandler.printAndLog(name);
         }
     }
 
@@ -70,17 +73,17 @@ public class FileService {
 
         ArrayList<String> filesToView = filesByExtension.get(selectedExtension);
 
-        System.out.println();
+        outputHandler.printAndLog("");
 
         if (!selectedExtension.equals("")) {
-            System.out.println("Here are the files with the extension '" + selectedExtension + "':");
+            outputHandler.printAndLog("Here are the files with the extension '" + selectedExtension + "':");
         } else {
-            System.out.println("Here are the files with no file extension:");
+            outputHandler.printAndLog("Here are the files with no file extension:");
         }
-        System.out.println("----------------------------------------------");
+        outputHandler.printAndLog("----------------------------------------------");
 
         for (String filename : filesToView) {
-            System.out.println(filename);
+            outputHandler.printAndLog(filename);
         }
     }
 
@@ -139,8 +142,8 @@ public class FileService {
 
     private void manipulateFile(String textFile) {
         System.out.println();
-        System.out.println(textFile);
-        System.out.println("------------------------");
+        outputHandler.printAndLog(textFile);
+        outputHandler.printAndLog("------------------------");
 
         while (true) {
             showFileManipulationMenu(textFile);
@@ -183,8 +186,8 @@ public class FileService {
     }
 
     private void printFilename(String textFile) {
-        System.out.println();
-        System.out.println("Filename: " + textFile);
+        outputHandler.printAndLog("");;
+        outputHandler.printAndLog("Filename: " + textFile);
         System.out.println();
     }
 
@@ -219,8 +222,8 @@ public class FileService {
             unit = "GB";
         }
 
-        System.out.println();
-        System.out.println("File size: " + fileSize + " " + unit);
+        outputHandler.printAndLog("");
+        outputHandler.printAndLog("File size: " + fileSize + " " + unit);
         System.out.println();
     }
 
@@ -240,8 +243,8 @@ public class FileService {
             return;
         }
 
-        System.out.println();
-        System.out.println("Number of lines: " + lines);
+        outputHandler.printAndLog("");
+        outputHandler.printAndLog("Number of lines: " + lines);
         System.out.println();
     }
 
@@ -249,12 +252,12 @@ public class FileService {
         String word = inputHandler.getWord();
 
         if (wordIsFound(textFile, word)) {
-            System.out.println("The word '" + word + "' appears in the file " + textFile);
+            outputHandler.printAndLog("The word '" + word + "' appears in the file " + textFile);
         } else {
-            System.out.println("The word '" + word + "' does not appear in the file " + textFile);
+            outputHandler.printAndLog("The word '" + word + "' does not appear in the file " + textFile);
         }
 
-        System.out.println();
+        outputHandler.printAndLog("");
     }
 
     private void countWordAppearances(String textFile) {
@@ -270,9 +273,9 @@ public class FileService {
             count = countWord(textFile, word);
         }
 
-        System.out.println("The word '" + word + 
+        outputHandler.printAndLog("The word '" + word + 
             "' appears " + count + " times in the file " + textFile);
-        System.out.println();
+        outputHandler.printAndLog("");
     }
 
     private int countWord(String textFile, String word) {
