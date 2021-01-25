@@ -1,7 +1,6 @@
 package service;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,11 +9,11 @@ import java.util.Set;
 import handler.UserInputHandler;
 
 public class FileService {
-    private Path resourcePath;
+    private String resourcePathString;
     private UserInputHandler inputHandler;
 
-    public FileService(Path resourcePath, UserInputHandler inputHandler) {
-        this.resourcePath = resourcePath;
+    public FileService(String resourcePathString, UserInputHandler inputHandler) {
+        this.resourcePathString = resourcePathString;
         this.inputHandler = inputHandler;
     }
 
@@ -77,6 +76,93 @@ public class FileService {
         }
     }
 
+    public void showTextFileOptions() {
+        String[] filenames = getAllFiles();
+
+        // initialize an empty ArrayList for available .txt files
+        ArrayList<String> textFiles = new ArrayList<>();
+
+        String selectedTextFile = "";
+
+        HashMap<String, ArrayList<String>> filesByExtension = getFilesByExtension(filenames);
+
+        System.out.println();
+
+        if (filesByExtension.containsKey(".txt")) {
+            // can ArrayList of available .txt files
+            textFiles = filesByExtension.get(".txt");
+        } else {
+            // if no .txt files are found, print a message and return from the method
+            System.out.println("---------------------------------------------------");
+            System.out.println("No text files were found in the resources directory");
+            System.out.println("---------------------------------------------------");
+            return;
+        }
+        
+        if (textFiles.size() == 1) {
+            // if only 1 .txt file is found, that file is automatically selected for analysis
+            selectedTextFile = textFiles.get(0);
+            System.out.println("There is 1 text file in the resources directory: " + selectedTextFile);
+        } else {
+            while (true) {
+                System.out.println("Available text files:");
+
+                for (int i = 0; i < textFiles.size(); i++) {
+                    System.out.println((i + 1) + ": " + textFiles.get(i));
+                }
+
+                int choice = inputHandler.getChoice("Please select a file (1-" + textFiles.size() + "): ");
+
+                if (choice > 0 && choice <= textFiles.size()) {
+                    selectedTextFile = textFiles.get(choice - 1);
+                    break;
+                } else {
+                    inputHandler.printUnrecognizedSelectionErrorMessage();
+                }
+            }
+
+            System.out.println();
+            System.out.println("The selected file is " + selectedTextFile);
+        }
+
+        manipulateFile(selectedTextFile);
+    }
+    
+    private void manipulateFile(String textFile) {
+        System.out.println();
+        System.out.println(textFile);
+        System.out.println("------------------------");
+
+        while (true) {
+            showFileManipulationMenu(textFile);
+            int choice = inputHandler.getChoice("Please select a function: ");
+
+            if (choice == -99) {
+                break;
+            }
+
+            switch (choice) {
+                case 1:
+                    printFilename(textFile);
+                    break;
+                default:
+                    inputHandler.printUnrecognizedSelectionErrorMessage();
+            }
+        }
+    }
+
+    private void showFileManipulationMenu(String textFile) {
+        System.out.println("Available functions for " + textFile + ":");
+        System.out.println("1: Print the name of the file");
+        System.out.println("-99: Return to main menu");
+    }
+
+    private void printFilename(String textFile) {
+        System.out.println();
+        System.out.println("Filename: " + textFile);
+        System.out.println();
+    }
+
     private void printAvailableExtensions(ArrayList<String> availableExtensions) {       
         System.out.println("Available file extensions:");
 
@@ -134,7 +220,7 @@ public class FileService {
     }
     
     private String[] getAllFiles() {
-        File resources = resourcePath.toFile();
+        File resources = new File(resourcePathString);
         return resources.list();
     }
 

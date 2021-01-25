@@ -32,6 +32,9 @@ public class UserInterface {
                 case 2:
                     fileService.listFilesByExtension();
                     break;
+                case 3:
+                    fileService.showTextFileOptions();
+                    break;
                 default:
                     inputHandler.printUnrecognizedSelectionErrorMessage();
             }
@@ -42,6 +45,7 @@ public class UserInterface {
         System.out.println("Available functions:");
         System.out.println("1: List all files");
         System.out.println("2: List files with a specific extension");
+        System.out.println("3: Request information about a text file");
         System.out.println("-99: Exit");
     }    
 }
