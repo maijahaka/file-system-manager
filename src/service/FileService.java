@@ -32,8 +32,6 @@ public class FileService {
         for (String name : filenames) {
             System.out.println(name);
         }
-
-        System.out.println();
     }
 
     public void listFilesByExtension() {
@@ -155,6 +153,9 @@ public class FileService {
                 case 2:
                     printFileSize(textFile);
                     break;
+                case 3:
+                    printNumberOfLines(textFile);
+                    break;
                 default:
                     inputHandler.printUnrecognizedSelectionErrorMessage();
             }
@@ -165,6 +166,7 @@ public class FileService {
         System.out.println("Available functions for " + textFile + ":");
         System.out.println("1: Print the name of the file");
         System.out.println("2: Print the size of the file");
+        System.out.println("3: Print the number of lines in the file");
         System.out.println("-99: Return to the main menu");
     }
 
@@ -206,6 +208,26 @@ public class FileService {
 
         System.out.println();
         System.out.println("File size: " + fileSize + " " + unit);
+        System.out.println();
+    }
+
+    private void printNumberOfLines(String textFile) {
+        // get path to the file relative to the resources directory
+        Path pathToFile = Paths.get(resourcePathString, textFile);
+
+        // initialize value for the number of lines in the file
+        long lines = 0;
+
+        try {
+            lines = Files.lines(pathToFile).count();
+        } catch (IOException e) {
+            // print error message and return from function if file size is not retrieved successfully
+            System.out.println("ERROR: " + e.getMessage());
+            return;
+        }
+
+        System.out.println();
+        System.out.println("Number of lines: " + lines);
         System.out.println();
     }
 
