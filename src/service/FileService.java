@@ -1,6 +1,9 @@
 package service;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -156,6 +159,9 @@ public class FileService {
                 case 3:
                     printNumberOfLines(textFile);
                     break;
+                case 4:
+                    lookForWord(textFile);
+                    break;
                 default:
                     inputHandler.printUnrecognizedSelectionErrorMessage();
             }
@@ -167,6 +173,7 @@ public class FileService {
         System.out.println("1: Print the name of the file");
         System.out.println("2: Print the size of the file");
         System.out.println("3: Print the number of lines in the file");
+        System.out.println("4: Look for a specific word in the file");
         System.out.println("-99: Return to the main menu");
     }
 
@@ -179,7 +186,7 @@ public class FileService {
     private void printFileSize(String textFile) {
         // get path to the file relative to the resources directory
         Path pathToFile = Paths.get(resourcePathString, textFile);
-        
+
         // initialize values for file size and size unit
         long fileSize = 0;
         String unit = "B";
@@ -187,7 +194,8 @@ public class FileService {
         try {
             fileSize = Files.size(pathToFile);
         } catch (IOException e) {
-            // print error message and return from function if file size is not retrieved successfully
+            // print error message and return from function if file size is not retrieved
+            // successfully
             System.out.println("ERROR: " + e.getMessage());
             return;
         }
@@ -221,7 +229,8 @@ public class FileService {
         try {
             lines = Files.lines(pathToFile).count();
         } catch (IOException e) {
-            // print error message and return from function if file size is not retrieved successfully
+            // print error message and return from function if file size is not retrieved
+            // successfully
             System.out.println("ERROR: " + e.getMessage());
             return;
         }
@@ -229,6 +238,40 @@ public class FileService {
         System.out.println();
         System.out.println("Number of lines: " + lines);
         System.out.println();
+    }
+
+    private void lookForWord(String textFile) {
+        String word = inputHandler.getWord();
+
+        if (wordIsFound(textFile, word)) {
+            System.out.println("The word '" + word + "' exists in the file " + textFile);
+        } else {
+            System.out.println("The word '" + word + "' does not exist in the file " + textFile);
+        }
+
+        System.out.println();
+    }
+
+    private boolean wordIsFound(String textFile, String word) {
+        try {
+            BufferedReader reader = 
+                new BufferedReader(new FileReader(resourcePathString + "/" + textFile));
+
+            // the file is read line by line
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // if a line contains the selected word, the method returns true
+                if (line.toLowerCase().contains(word.toLowerCase())) {
+                    return true;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("ERROR: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("ERROR: " + e.getMessage());
+        }
+
+        return false;
     }
 
     private void printAvailableExtensions(ArrayList<String> availableExtensions) {       

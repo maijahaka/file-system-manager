@@ -20,6 +20,21 @@ public class UserInputHandler {
             return -1;
         }
     }
+
+    public String getWord() {
+        while (true) {
+            System.out.print("Please enter a word: ");
+
+            String word = scanner.nextLine();
+            System.out.println();
+
+            if (word.length() > 0) {
+                return word;
+            } else {
+                System.out.println("No word was entered. Please try again.");
+            }
+        }
+	}
     
     public void printUnrecognizedSelectionErrorMessage() {
         System.out.println("================================================");
