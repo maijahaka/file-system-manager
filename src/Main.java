@@ -1,5 +1,3 @@
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Scanner;
 import handler.UserInputHandler;
 import service.FileService;

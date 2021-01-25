@@ -1,6 +1,10 @@
 package service;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,36 +32,38 @@ public class FileService {
         for (String name : filenames) {
             System.out.println(name);
         }
-        
+
         System.out.println();
     }
 
-	public void listFilesByExtension() {
+    public void listFilesByExtension() {
         String[] filenames = getAllFiles();
 
-        // HashMap with file extensions as keys and ArrayList of files with each extension
+        // HashMap with file extensions as keys and ArrayList of files with each
+        // extension
         // as values
         HashMap<String, ArrayList<String>> filesByExtension = getFilesByExtension(filenames);
 
-        // a sorted ArrayList of the available extensions so that the user can be presented 
+        // a sorted ArrayList of the available extensions so that the user can be
+        // presented
         // with a sorted list of options
         ArrayList<String> availableExtensions = getAvailableExtensions(filesByExtension.keySet());
 
         String selectedExtension = null;
-        
+
         while (true) {
             System.out.println();
             printAvailableExtensions(availableExtensions);
 
-            int choice = inputHandler.getChoice("Please select an extension " +
-                "(1-" + availableExtensions.size() + "): ");
-            
+            int choice = inputHandler
+                    .getChoice("Please select an extension " + "(1-" + availableExtensions.size() + "): ");
+
             if (choice > 0 && choice <= availableExtensions.size()) {
                 selectedExtension = availableExtensions.get(choice - 1);
                 break;
             } else {
                 inputHandler.printUnrecognizedSelectionErrorMessage();
-            }                
+            }
         }
 
         ArrayList<String> filesToView = filesByExtension.get(selectedExtension);
@@ -98,9 +104,10 @@ public class FileService {
             System.out.println("---------------------------------------------------");
             return;
         }
-        
+
         if (textFiles.size() == 1) {
-            // if only 1 .txt file is found, that file is automatically selected for analysis
+            // if only 1 .txt file is found, that file is automatically selected for
+            // analysis
             selectedTextFile = textFiles.get(0);
             System.out.println("There is 1 text file in the resources directory: " + selectedTextFile);
         } else {
@@ -127,7 +134,7 @@ public class FileService {
 
         manipulateFile(selectedTextFile);
     }
-    
+
     private void manipulateFile(String textFile) {
         System.out.println();
         System.out.println(textFile);
@@ -145,6 +152,9 @@ public class FileService {
                 case 1:
                     printFilename(textFile);
                     break;
+                case 2:
+                    printFileSize(textFile);
+                    break;
                 default:
                     inputHandler.printUnrecognizedSelectionErrorMessage();
             }
@@ -154,12 +164,48 @@ public class FileService {
     private void showFileManipulationMenu(String textFile) {
         System.out.println("Available functions for " + textFile + ":");
         System.out.println("1: Print the name of the file");
-        System.out.println("-99: Return to main menu");
+        System.out.println("2: Print the size of the file");
+        System.out.println("-99: Return to the main menu");
     }
 
     private void printFilename(String textFile) {
         System.out.println();
         System.out.println("Filename: " + textFile);
+        System.out.println();
+    }
+
+    private void printFileSize(String textFile) {
+        // get path to the file relative to the resources directory
+        Path pathToFile = Paths.get(resourcePathString, textFile);
+        
+        // initialize values for file size and size unit
+        long fileSize = 0;
+        String unit = "B";
+
+        try {
+            fileSize = Files.size(pathToFile);
+        } catch (IOException e) {
+            // print error message and return from function if file size is not retrieved successfully
+            System.out.println("ERROR: " + e.getMessage());
+            return;
+        }
+
+        // convert the file size to convenient units
+        if (fileSize < 1024) {
+            // no need for unit conversion
+        } else if (fileSize < 1048576) {
+            fileSize = fileSize / 1024;
+            unit = "KB";
+        } else if (fileSize < 1073741824) {
+            fileSize = fileSize / 1048576;
+            unit = "MB";
+        } else {
+            fileSize = fileSize / 1073741824;
+            unit = "GB";
+        }
+
+        System.out.println();
+        System.out.println("File size: " + fileSize + " " + unit);
         System.out.println();
     }
 
