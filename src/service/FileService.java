@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.Set;
 
 import handler.UserInputHandler;
@@ -162,6 +163,9 @@ public class FileService {
                 case 4:
                     lookForWord(textFile);
                     break;
+                case 5:
+                    countWordAppearances(textFile);
+                    break;
                 default:
                     inputHandler.printUnrecognizedSelectionErrorMessage();
             }
@@ -174,6 +178,7 @@ public class FileService {
         System.out.println("2: Print the size of the file");
         System.out.println("3: Print the number of lines in the file");
         System.out.println("4: Look for a specific word in the file");
+        System.out.println("5: Check how many times a specific word appears in the file");
         System.out.println("-99: Return to the main menu");
     }
 
@@ -244,12 +249,53 @@ public class FileService {
         String word = inputHandler.getWord();
 
         if (wordIsFound(textFile, word)) {
-            System.out.println("The word '" + word + "' exists in the file " + textFile);
+            System.out.println("The word '" + word + "' appears in the file " + textFile);
         } else {
-            System.out.println("The word '" + word + "' does not exist in the file " + textFile);
+            System.out.println("The word '" + word + "' does not appear in the file " + textFile);
         }
 
         System.out.println();
+    }
+
+    private void countWordAppearances(String textFile) {
+        String word = inputHandler.getWord();
+        
+        // initialize value for the number of times the word was found
+        int count = 0;
+
+        // only count appearances of the word if it is known to appear in the file
+        // method wordIsFound uses BufferedReader, so it is faster than countWord,
+        // which uses Scanner
+        if (wordIsFound(textFile, word)) {
+            count = countWord(textFile, word);
+        }
+
+        System.out.println("The word '" + word + 
+            "' appears " + count + " times in the file " + textFile);
+        System.out.println();
+    }
+
+    private int countWord(String textFile, String word) {
+        // initialize value for the number of times the word was found
+        int count = 0;
+        try {
+            Scanner fileScanner = new Scanner(new File(resourcePathString + "/" + textFile));
+            fileScanner.useDelimiter(" ");
+
+            // read the file word by word and look for the specified word
+            String wordInFile;
+            while (fileScanner.hasNext()) {
+                wordInFile = fileScanner.next();
+
+                if (wordInFile.toLowerCase().contains(word.toLowerCase())) {
+                    count ++;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("ERROR: " + e.getMessage());
+        }
+
+        return count;
     }
 
     private boolean wordIsFound(String textFile, String word) {
@@ -270,7 +316,6 @@ public class FileService {
         } catch (IOException e) {
             System.out.println("ERROR: " + e.getMessage());
         }
-
         return false;
     }
 
